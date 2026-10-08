@@ -55,4 +55,271 @@
             font-size: 1.4em;
             border-bottom: 2px solid var(--primary-color); 
             padding-bottom: 8px; 
-            margin-top
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        h3 { color: #555; margin-top: 25px; font-size: 1.1em; }
+
+        /* Design des cartes avec alternance des couleurs */
+        .card { 
+            border-radius: 12px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04); 
+        }
+
+        /* Couleur A : Standard Blanc/Orange */
+        .card.color-a {
+            background: #ffffff;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        /* Couleur B : Alternance Beige/Marron clair */
+        .card.color-b {
+            background: #fdf6ee; 
+            border-left: 5px solid #a87b51; 
+        }
+
+        .time { 
+            font-weight: 700; 
+            color: var(--primary-color); 
+            font-size: 1.1em; 
+            margin-bottom: 5px;
+        }
+        .card.color-b .time { color: #a87b51; }
+
+        .title { font-size: 1.15em; font-weight: 600; margin: 5px 0; line-height: 1.3; }
+        .description { font-size: 0.95em; color: #555; margin-top: 5px; line-height: 1.4; }
+        .location { color: #777; font-size: 0.9em; margin-top: 8px; display: flex; align-items: center; font-weight: 500; }
+        
+        .plan-img { width: 100%; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* Boutons de contact */
+        .contact-link {
+            display: inline-block;
+            margin: 6px 0;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 15px;
+            background: #ffffff;
+            border: 1px solid #eedcce;
+            border-radius: 8px;
+            width: calc(100% - 30px);
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        /* Barre de navigation 5 éléments */
+        .nav-bar { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            background: var(--card-bg); 
+            display: flex; 
+            justify-content: space-around; 
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08); 
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .nav-item { 
+            flex: 1; 
+            text-align: center; 
+            padding: 8px 0; 
+            cursor: pointer; 
+            color: #888; 
+            font-size: 0.75em; 
+            border-top: 3px solid transparent; 
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active { 
+            color: var(--primary-color); 
+            border-top-color: var(--primary-color); 
+            font-weight: 600; 
+        }
+
+        .nav-item i { display: block; font-size: 1.5em; margin-bottom: 3px; font-style: normal; }
+        .loader { text-align: center; color: #888; font-style: italic; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="2022_Logo Congrès.png" alt="Logo Les Feux Follets">
+</header>
+
+<!-- Onglets Programme -->
+<div id="samedi" class="tab-content active">
+    <h2>📅 Samedi 17 Octobre</h2>
+    <div id="samedi-list"><div class="loader">Chargement du programme...</div></div>
+</div>
+
+<div id="dimanche" class="tab-content">
+    <h2>📅 Dimanche 18 Octobre</h2>
+    <div id="dimanche-list"><div class="loader">Chargement du programme...</div></div>
+</div>
+
+<!-- Onglet Stands -->
+<div id="stands" class="tab-content">
+    <h2>⛺ Stands & Partenaires</h2>
+    <div id="stands-list"><div class="loader">Chargement des stands...</div></div>
+</div>
+
+<!-- Onglet Plan -->
+<div id="plan" class="tab-content">
+    <h2>🗺️ Plans du site</h2>
+    <h3>Niveau +1</h3>
+    <img src="Niveau +1.png" class="plan-img" alt="Plan Niveau +1">
+    <h3>Niveau 0</h3>
+    <img src="Niveau 0.png" class="plan-img" alt="Plan Niveau 0">
+    <h3>Niveau -1</h3>
+    <img src="Niveau -1.png" class="plan-img" alt="Plan Niveau -1">
+</div>
+
+<!-- Nouvel Onglet Contact -->
+<div id="contact" class="tab-content">
+    <h2>📞 Contact & Assistance</h2>
+    <div class="card color-a">
+        <div class="title">Besoin d'aide pendant le congrès ?</div>
+        <div class="description">
+            L'équipe de l'association est à votre disposition sur place pour toute question ou urgence.
+            <br><br>
+            <strong>📱 Par téléphone :</strong><br>
+            <a href="tel:+33698873131" class="contact-link">📞 06 98 87 31 31</a>
+            <a href="tel:+33768668848" class="contact-link">📞 07 68 66 88 48</a>
+            <br><br>
+            <strong>✉️ Par email :</strong><br>
+            <a href="mailto:lesfeuxfollets@phenylcetonurie.org" class="contact-link">✉️ lesfeuxfollets@...</a>
+        </div>
+    </div>
+</div>
+
+<!-- Menu de navigation (5 éléments) -->
+<div class="nav-bar">
+    <div class="nav-item active" onclick="showTab('samedi')"><i>📅</i>Sam.</div>
+    <div class="nav-item" onclick="showTab('dimanche')"><i>🗓️</i>Dim.</div>
+    <div class="nav-item" onclick="showTab('stands')"><i>⛺</i>Stands</div>
+    <div class="nav-item" onclick="showTab('plan')"><i>🗺️</i>Plan</div>
+    <div class="nav-item" onclick="showTab('contact')"><i>📞</i>Contact</div>
+</div>
+
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        
+        const navIds = ['samedi', 'dimanche', 'stands', 'plan', 'contact'];
+        const index = navIds.indexOf(tabId);
+        if (index !== -1) {
+            document.querySelectorAll('.nav-item')[index].classList.add('active');
+        }
+        window.scrollTo(0,0);
+    }
+
+    // Sélection d'emoji améliorée (inclut la description)
+    function getEmoji(text, desc = '') {
+        let t = (text + " " + desc).toLowerCase();
+        if (t.includes('t-shirt') || t.includes('vêtement') || t.includes('boutique')) return '👕';
+        if (t.includes('livre') || t.includes('édition') || t.includes('auteur')) return '📚';
+        if (t.includes('laboratoire') || t.includes('médical') || t.includes('pharma') || t.includes('vitaflo') || t.includes('nutricia') || t.includes('taranis') || t.includes('lubifood') || t.includes('recherche')) return '🔬';
+        if (t.includes('dégustation') || t.includes('repas') || t.includes('déjeuner') || t.includes('dîner') || t.includes('buffet') || t.includes('traiteur')) return '🍽️';
+        if (t.includes('produit') || t.includes('aliment') || t.includes('nutrition')) return '🥐';
+        if (t.includes('accueil') || t.includes('café') || t.includes('pause')) return '☕';
+        if (t.includes('conférence') || t.includes('plénière') || t.includes('présentation') || t.includes('intervention')) return '🎤';
+        if (t.includes('atelier') || t.includes('groupe')) return '🛠️';
+        if (t.includes('jeune') || t.includes('enfant') || t.includes('garderie') || t.includes('ado')) return '🧸';
+        if (t.includes('ag') || t.includes('assemblée') || t.includes('réunion')) return '📋';
+        if (t.includes('soirée') || t.includes('gala') || t.includes('fête')) return '🎉';
+        if (t.includes('stand')) return '⛺';
+        if (t.includes('clôture') || t.includes('fin')) return '👋';
+        return '🔹';
+    }
+
+    async function loadProgramme() {
+        try {
+            const response = await fetch('programme.ods');
+            if(!response.ok) throw new Error("Fichier non trouvé");
+            
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const sheetNames = workbook.SheetNames;
+            
+            if(sheetNames.length > 0) renderSheet(workbook, sheetNames[0], 'samedi-list', false);
+            if(sheetNames.length > 1) renderSheet(workbook, sheetNames[1], 'dimanche-list', false);
+            if(sheetNames.length > 2) renderSheet(workbook, sheetNames[2], 'stands-list', true);
+        } catch (error) {
+            console.error(error);
+            const msg = "<div class='loader'>⚠️ Impossible de charger le programme. Vérifie le fichier <b>programme.ods</b>.</div>";
+            document.getElementById('samedi-list').innerHTML = msg;
+            document.getElementById('dimanche-list').innerHTML = msg;
+            document.getElementById('stands-list').innerHTML = msg;
+        }
+    }
+
+    function renderSheet(workbook, sheetName, elementId, isStands) {
+        const sheet = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        
+        let html = '';
+        let lastGroupKey = null;
+        let colorClass = 'color-a';
+        
+        for (let i = 1; i < data.length; i++) {
+            let row = data[i];
+            if (!row || row.length === 0 || (!row[0] && !row[1])) continue;
+            
+            if (isStands) {
+                // Stands: Nom | Description | Emplacement
+                let nom = row[0] || '';
+                let desc = row[1] || '';
+                let lieu = row[2] || '';
+                
+                // On alterne la couleur pour chaque nouveau stand (nom différent)
+                if (nom && nom !== lastGroupKey) {
+                    colorClass = (colorClass === 'color-a') ? 'color-b' : 'color-a';
+                    lastGroupKey = nom;
+                }
+                
+                if(nom) {
+                    html += `<div class="card ${colorClass}">
+                        <div class="title">${getEmoji(nom, desc)} ${nom}</div>
+                        ${desc ? `<div class="description">${desc}</div>` : ''}
+                        ${lieu ? `<div class="location">📍 ${lieu}</div>` : ''}
+                    </div>`;
+                }
+            } else {
+                // Programme: Heure | Activité | Description | Lieu
+                let heure = row[0] || '';
+                let activite = row[1] || '';
+                let desc = row[2] || '';
+                let lieu = row[3] || '';
+                
+                // On alterne la couleur dès que l'heure change
+                if (heure && heure !== lastGroupKey) {
+                    colorClass = (colorClass === 'color-a') ? 'color-b' : 'color-a';
+                    lastGroupKey = heure;
+                }
+                
+                html += `<div class="card ${colorClass}">
+                    ${heure ? `<div class="time">⏰ ${heure}</div>` : ''}
+                    <div class="title">${getEmoji(activite, desc)} ${activite}</div>
+                    ${desc ? `<div class="description">${desc}</div>` : ''}
+                    ${lieu ? `<div class="location">📍 ${lieu}</div>` : ''}
+                </div>`;
+            }
+        }
+        
+        if(html === '') html = "<div class='loader'>Aucune information trouvée.</div>";
+        document.getElementById(elementId).innerHTML = html;
+    }
+
+    window.onload = loadProgramme;
+</script>
+
+</body>
+</html>
