@@ -42,7 +42,14 @@
             padding: 20px 15px; 
             animation: fadeIn 0.3s ease;
         }
-
+/* Style pour l'image sous le logo */
+        .hero-banner {
+            width: 100%;
+            height: 160px; /* Tu peux augmenter ou diminuer cette valeur (ex: 200px) */
+            object-fit: cover; /* Coupe l'image proprement sans l'écraser */
+            display: block;
+            border-bottom: 3px solid var(--primary-color); /* Optionnel : petite ligne orange en bas */
+        }
         .tab-content.active { display: block; }
 
         @keyframes fadeIn {
