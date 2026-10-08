@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Congrès 2026 - Les Feux Follets</title>
+    <!-- Librairie pour lire les fichiers ODS (tableurs) sans serveur -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #d97d22; /* Orange inspiré du logo */
+            --bg-color: #fdfaf6;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            padding-bottom: 80px; /* Espace pour le menu du bas */
+        }
+
+        header { 
+            background-color: var(--card-bg); 
+            text-align: center; 
+            padding: 15px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header img { 
+            max-height: 80px; 
+            width: auto;
+        }
+
+        .tab-content { 
+            display: none; 
+            padding: 20px 15px; 
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active { 
+            display: block; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { 
+            color: var(--primary-color); 
+            font-size: 1.4em;
+            border-bottom: 2px solid var(--primary-color); 
+            padding-bottom: 8px; 
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 25px;
+            font-size: 1.1em;
+        }
+
+        /* Design des cartes du programme */
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04); 
+            border-left: 5px solid var(--primary-color); 
+        }
+
+        .time { 
+            font-weight: 700; 
+            color: var(--primary-color); 
+            font-size: 1.1em; 
+            margin-bottom: 5px;
+        }
+
+        .title { 
+            font-size: 1.15em; 
+            font-weight: 600;
+            margin: 5px 0; 
+            line-height: 1.3;
+        }
+
+        .description {
+            font-size: 0.95em;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .location { 
+            color: #777; 
+            font-size: 0.9em; 
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Images du plan */
+        .plan-img { 
+            width: 100%; 
+            border-radius: 10px; 
+            margin-bottom: 10px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        }
+
+        /* Barre de navigation inférieure */
+        .nav-bar { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            background: var(--card-bg); 
+            display: flex; 
+            justify-content: space-around; 
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08); 
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom); /* Pour les iPhone récents */
+        }
+
+        .nav-item { 
+            flex: 1; 
+            text-align: center; 
+            padding: 10px 0; 
+            cursor: pointer; 
+            color: #888; 
+            font-size: 0.85em; 
+            border-top: 3px solid transparent; 
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active { 
+            color: var(--primary-color); 
+            border-top-color: var(--primary-color); 
+            font-weight: 600; 
+        }
+
+        .nav-item i { 
+            display: block; 
+            font-size: 1.6em; 
+            margin-bottom: 3px; 
+            font-style: normal;
+        }
+
+        .loader {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="2022_Logo Congrès.png" alt="Logo Les Feux Follets">
+</header>
+
+<!-- Onglet Samedi -->
+<div id="samedi" class="tab-content active">
+    <h2>📅 Samedi 17 Octobre</h2>
+    <div id="samedi-list"><div class="loader">Chargement du programme...</div></div>
+</div>
+
+<!-- Onglet Dimanche -->
+<div id="dimanche" class="tab-content">
+    <h2>📅 Dimanche 18 Octobre</h2>
+    <div id="dimanche-list"><div class="loader">Chargement du programme...</div></div>
+</div>
+
+<!-- Onglet Stands -->
+<div id="stands" class="tab-content">
+    <h2>⛺ Stands et Partenaires</h2>
+    <div id="stands-list"><div class="loader">Chargement des stands...</div></div>
+</div>
+
+<!-- Onglet Plan -->
+<div id="plan" class="tab-content">
+    <h2>🗺️ Plans du site</h2>
+    
+    <h3>Niveau +1</h3>
+    <img src="Niveau +1.png" class="plan-img" alt="Plan Niveau +1">
+    
+    <h3>Niveau 0</h3>
+    <img src="Niveau 0.png" class="plan-img" alt="Plan Niveau 0">
+    
+    <h3>Niveau -1</h3>
+    <img src="Niveau -1.png" class="plan-img" alt="Plan Niveau -1">
+</div>
+
+<!-- Menu de navigation -->
+<div class="nav-bar">
+    <div class="nav-item active" onclick="showTab('samedi')">
+        <i>📅</i>Samedi 17
+    </div>
+    <div class="nav-item" onclick="showTab('dimanche')">
+        <i>🗓️</i>Dimanche 18
+    </div>
+    <div class="nav-item" onclick="showTab('stands')">
+        <i>⛺</i>Stands
+    </div>
+    <div class="nav-item" onclick="showTab('plan')">
+        <i>🗺️</i>Plan
+    </div>
+</div>
+
+<script>
+    // Gestion de la navigation entre les onglets
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        
+        // Trouver l'élément de menu cliqué et l'activer
+        const navItems = document.querySelectorAll('.nav-item');
+        if(tabId === 'samedi') navItems[0].classList.add('active');
+        if(tabId === 'dimanche') navItems[1].classList.add('active');
+        if(tabId === 'stands') navItems[2].classList.add('active');
+        if(tabId === 'plan') navItems[3].classList.add('active');
+        
+        window.scrollTo(0,0);
+    }
+
+    // Attribution automatique des emojis en fonction des mots clés
+    function getEmoji(text) {
+        if (!text) return '🔹';
+        let t = text.toLowerCase();
+        if (t.includes('accueil') || t.includes('café') || t.includes('pause')) return '☕';
+        if (t.includes('repas') || t.includes('déjeuner') || t.includes('dîner') || t.includes('buffet')) return '🍽️';
+        if (t.includes('conférence') || t.includes('plénière') || t.includes('présentation') || t.includes('intervention')) return '🎤';
+        if (t.includes('atelier') || t.includes('groupe')) return '🛠️';
+        if (t.includes('jeune') || t.includes('enfant') || t.includes('garderie')) return '🧸';
+        if (t.includes('ag') || t.includes('assemblée')) return '📋';
+        if (t.includes('soirée') || t.includes('gala') || t.includes('fête')) return '🎉';
+        if (t.includes('stand') || t.includes('laboratoire') || t.includes('dégustation')) return '🧪';
+        if (t.includes('clôture') || t.includes('fin')) return '👋';
+        return '🔹';
+    }
+
+    // Fonction pour charger et lire le fichier .ods
+    async function loadProgramme() {
+        try {
+            // Requête pour récupérer le fichier ODS déposé sur Github
+            const response = await fetch('programme.ods');
+            if(!response.ok) throw new Error("Fichier non trouvé");
+            
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const sheetNames = workbook.SheetNames;
+            
+            // On s'attend à ce que l'onglet 1 = Samedi, 2 = Dimanche, 3 = Stands
+            if(sheetNames.length > 0) renderSheet(workbook, sheetNames[0], 'samedi-list', false);
+            if(sheetNames.length > 1) renderSheet(workbook, sheetNames[1], 'dimanche-list', false);
+            if(sheetNames.length > 2) renderSheet(workbook, sheetNames[2], 'stands-list', true);
+
+        } catch (error) {
+            console.error("Erreur de chargement :", error);
+            const msg = "<div class='loader'>⚠️ Impossible de charger le programme. Vérifie que le fichier <b>programme.ods</b> est bien présent à la racine de ton GitHub.</div>";
+            document.getElementById('samedi-list').innerHTML = msg;
+            document.getElementById('dimanche-list').innerHTML = msg;
+            document.getElementById('stands-list').innerHTML = msg;
+        }
+    }
+
+    // Construction HTML à partir des données du tableur
+    function renderSheet(workbook, sheetName, elementId, isStands) {
+        const sheet = workbook.Sheets[sheetName];
+        // Convertir la feuille en tableau JSON
+        const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        
+        let html = '';
+        
+        // On commence à i=1 pour ignorer la ligne d'en-tête (titres des colonnes)
+        for (let i = 1; i < data.length; i++) {
+            let row = data[i];
+            if (!row || row.length === 0 || (!row[0] && !row[1])) continue; // Sauter les lignes vides
+            
+            if (isStands) {
+                // Format attendu pour les stands : Nom | Description | Emplacement
+                let nom = row[0] || '';
+                let desc = row[1] || '';
+                let lieu = row[2] || '';
+                
+                if(nom) {
+                    html += `<div class="card">
+                        <div class="title">${getEmoji(nom)} ${nom}</div>
+                        ${desc ? `<div class="description">${desc}</div>` : ''}
+                        ${lieu ? `<div class="location">📍 ${lieu}</div>` : ''}
+                    </div>`;
+                }
+            } else {
+                // Format attendu pour le programme : Heure | Activité | Lieu
+                let heure = row[0] || '';
+                let activite = row[1] || '';
+                let lieu = row[2] || '';
+                
+                html += `<div class="card">
+                    ${heure ? `<div class="time">⏰ ${heure}</div>` : ''}
+                    <div class="title">${getEmoji(activite)} ${activite}</div>
+                    ${lieu ? `<div class="location">📍 ${lieu}</div>` : ''}
+                </div>`;
+            }
+        }
+        
+        if(html === '') {
+            html = "<div class='loader'>Aucune information trouvée pour cet onglet.</div>";
+        }
+        
+        document.getElementById(elementId).innerHTML = html;
+    }
+
+    // Charger les données dès l'ouverture de l'application
+    window.onload = loadProgramme;
+</script>
+
+</body>
+</html>
