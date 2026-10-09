@@ -186,6 +186,60 @@
 
         .nav-item i { display: block; font-size: 1.5em; margin-bottom: 3px; font-style: normal; }
         .loader { text-align: center; color: #888; font-style: italic; padding: 20px; }
+
+        /* Bannière d'invitation à l'installation */
+        .pwa-banner {
+            position: fixed;
+            bottom: 75px;
+            left: 15px;
+            right: 15px;
+            background: #ffffff;
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .pwa-banner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .pwa-banner-close {
+            background: none;
+            border: none;
+            font-size: 1.3em;
+            cursor: pointer;
+            color: #888;
+            padding: 0 5px;
+        }
+
+        .pwa-banner-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+        
     </style>
 </head>
 <body>
@@ -385,9 +439,73 @@
         if(html === '') html = "<div class='loader'>Aucune information trouvée.</div>";
         document.getElementById(elementId).innerHTML = html;
     }
+let deferredPrompt;
 
-    window.onload = loadProgramme;
+    function initPwaBanner() {
+        // Masquer si l'application est déjà lancée depuis l'écran d'accueil
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        if (isStandalone) return;
+
+        // Ne plus afficher si l'utilisateur l'a déjà fermée auparavant
+        if (localStorage.getItem('pwa_prompt_dismissed') === 'true') return;
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const banner = document.getElementById('pwa-banner');
+        const textEl = document.getElementById('pwa-banner-text');
+        const btnEl = document.getElementById('pwa-install-btn');
+
+        if (isIOS) {
+            // Instructions spécifiques iOS Safari
+            textEl.innerHTML = "Pour installer l'application sur ton iPhone :<br>1. Appuie sur le bouton <strong>Partager</strong> ⎘ (en bas du navigateur).<br>2. Choisis <strong>« Sur l'écran d'accueil »</strong> ➕.";
+            banner.style.display = 'block';
+        } else {
+            // Détection Android / Chrome avec bouton d'installation directe
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                btnEl.style.display = 'block';
+                banner.style.display = 'block';
+            });
+            
+            // Notification alternative si beforeinstallprompt ne se déclenche pas
+            setTimeout(() => {
+                if (!deferredPrompt && localStorage.getItem('pwa_prompt_dismissed') !== 'true' && !isIOS) {
+                    textEl.innerHTML = "Pour accéder rapidement au programme : ouvre le menu de ton navigateur (⋮) et choisis <strong>« Ajouter à l'écran d'accueil »</strong>.";
+                    banner.style.display = 'block';
+                }
+            }, 2000);
+        }
+    }
+
+    function installPwa() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+                deferredPrompt = null;
+                closePwaBanner();
+            });
+        }
+    }
+
+    function closePwaBanner() {
+        document.getElementById('pwa-banner').style.display = 'none';
+        localStorage.setItem('pwa_prompt_dismissed', 'true');
+    }
+    window.onload = function() {
+        loadProgramme();
+        initPwaBanner();
+    };
 </script>
-
+<!-- Bannière "Ajouter à l'écran d'accueil" -->
+<div id="pwa-banner" class="pwa-banner">
+    <div class="pwa-banner-header">
+        <span>📱 Installer l'application</span>
+        <button class="pwa-banner-close" onclick="closePwaBanner()">&times;</button>
+    </div>
+    <div id="pwa-banner-text" class="description">
+        Ajoutez cette application sur votre écran d'accueil pour y accéder facilement pendant le congrès.
+    </div>
+    <button id="pwa-install-btn" class="pwa-banner-btn" style="display:none;" onclick="installPwa()">Ajouter à l'écran d'accueil</button>
+</div>
 </body>
 </html>
