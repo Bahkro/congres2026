@@ -255,6 +255,57 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             background-color: #ffffff;
             box-sizing: border-box;
+        /* Visionneuse plein écran pour les plans */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.92);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .lightbox-img {
+            /* Rotation à 90° et ajustement aux dimensions de l'écran du téléphone */
+            transform: rotate(90deg);
+            max-width: 85vh; /* La largeur de l'image s'adapte à la hauteur du téléphone */
+            max-height: 85vw; /* La hauteur de l'image s'adapte à la largeur du téléphone */
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10001;
+        }
+
+        .lightbox-hint {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85em;
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        /* Curseur sur les images de plan */
+        .plan-img {
+            cursor: pointer;
+        }
         }
     </style>
 </head>
@@ -284,12 +335,16 @@
 <!-- Onglet Plan -->
 <div id="plan" class="tab-content">
     <h2>🗺️ Plans du site</h2>
+    <p class="description" style="margin-bottom: 15px;">💡 <em>Appuie sur un plan pour l'ouvrir en grand et en mode paysage.</em></p>
+    
     <h3>Niveau +1</h3>
-    <img src="Niveau +1.png" class="plan-img" alt="Plan Niveau +1">
+    <img src="Niveau +1.png" class="plan-img" alt="Plan Niveau +1" onclick="openLightbox(this.src)">
+    
     <h3>Niveau 0</h3>
-    <img src="Niveau 0.png" class="plan-img" alt="Plan Niveau 0">
+    <img src="Niveau 0.png" class="plan-img" alt="Plan Niveau 0" onclick="openLightbox(this.src)">
+    
     <h3>Niveau -1</h3>
-    <img src="Niveau -1.png" class="plan-img" alt="Plan Niveau -1">
+    <img src="Niveau -1.png" class="plan-img" alt="Plan Niveau -1" onclick="openLightbox(this.src)">
 </div>
 
 <!-- Nouvel Onglet Contact -->
@@ -513,6 +568,17 @@ let deferredPrompt;
         loadProgramme();
         initPwaBanner();
     };
+    
+    function openLightbox(src) {
+        const lightbox = document.getElementById('lightbox');
+        const img = document.getElementById('lightbox-img');
+        img.src = src;
+        lightbox.style.display = 'flex';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+    }
 </script>
 <!-- Bannière "Ajouter à l'écran d'accueil" -->
 <div id="pwa-banner" class="pwa-banner">
@@ -524,6 +590,12 @@ let deferredPrompt;
         Ajoutez cette application sur votre écran d'accueil pour y accéder facilement pendant le congrès.
     </div>
     <button id="pwa-install-btn" class="pwa-banner-btn" style="display:none;" onclick="installPwa()">Ajouter à l'écran d'accueil</button>
+</div>
+    <!-- Fenêtre plein écran pour l'image tournée -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Plan agrandi">
+    <div class="lightbox-hint">Toucher l'écran pour fermer</div>
 </div>
 </body>
 </html>
