@@ -1,0 +1,22 @@
+{
+  "name": "Congrès 2026 - Les Feux Follets",
+  "short_name": "Feux Follets",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fdfaf6",
+  "theme_color": "#d97d22",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
