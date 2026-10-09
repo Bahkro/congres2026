@@ -292,20 +292,103 @@
             z-index: 10001;
         }
 
-        .lightbox-hint {
-            position: absolute;
-            bottom: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85em;
-            text-align: center;
-            width: 100%;
-            pointer-events: none;
+        /* Visionneuse plein écran (Lightbox) */
+        .lightbox {
+            display: none;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 99999 !important; /* Passe au-dessus de tout le reste */
+            touch-action: none;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
-        /* Curseur sur les images de plan */
-        .plan-img {
-            cursor: pointer;
+        .lightbox-img-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
+        .lightbox-img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+            transition: transform 0.25s ease;
+        }
+
+        /* Mode 90° : adapté à la hauteur du téléphone */
+        .lightbox-img.rotate-90 {
+            width: 80vh;
+            height: 80vw;
+            max-width: 80vh;
+            max-height: 80vw;
+            transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        /* Mode 0° : vue normale */
+        .lightbox-img.rotate-0 {
+            width: 90vw;
+            height: 90vh;
+            max-width: 90vw;
+            max-height: 90vh;
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        /* Barre de boutons en haut de la visionneuse */
+        .lightbox-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            left: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100000;
+        }
+
+        .lightbox-btn {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lightbox-close-btn {
+            font-size: 1.4em;
+            padding: 4px 12px;
+        }
+
+        .lightbox-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            width: 100%;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.8em;
+            text-align: center;
+            pointer-events: none;
+            z-index: 100000;
         }
     </style>
 </head>
@@ -569,11 +652,31 @@ let deferredPrompt;
         initPwaBanner();
     };
     
+    let currentRotation = 90;
+
     function openLightbox(src) {
         const lightbox = document.getElementById('lightbox');
         const img = document.getElementById('lightbox-img');
         img.src = src;
-        lightbox.style.display = 'flex';
+        currentRotation = 90; // Par défaut à 90°
+        applyImageRotation();
+        lightbox.style.display = 'block';
+    }
+
+    function toggleRotation(event) {
+        if(event) event.stopPropagation(); // Évite de fermer la lightbox en cliquant sur le bouton
+        // Alterne entre 90° (orienté selon la hauteur du téléphone) et 0° (vue normale)
+        currentRotation = (currentRotation === 90) ? 0 : 90;
+        applyImageRotation();
+    }
+
+    function applyImageRotation() {
+        const img = document.getElementById('lightbox-img');
+        if (currentRotation === 90) {
+            img.className = 'lightbox-img rotate-90';
+        } else {
+            img.className = 'lightbox-img rotate-0';
+        }
     }
 
     function closeLightbox() {
@@ -591,11 +694,16 @@ let deferredPrompt;
     </div>
     <button id="pwa-install-btn" class="pwa-banner-btn" style="display:none;" onclick="installPwa()">Ajouter à l'écran d'accueil</button>
 </div>
-    <!-- Fenêtre plein écran pour l'image tournée -->
+<!-- Fenêtre plein écran (Lightbox) -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-    <img id="lightbox-img" class="lightbox-img" src="" alt="Plan agrandi">
-    <div class="lightbox-hint">Toucher l'écran pour fermer</div>
+    <div class="lightbox-controls">
+        <button class="lightbox-btn" onclick="toggleRotation(event)">🔄 Pivoter</button>
+        <button class="lightbox-btn lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+    </div>
+    <div class="lightbox-img-container">
+        <img id="lightbox-img" class="lightbox-img rotate-90" src="" alt="Plan agrandi" onclick="event.stopPropagation()">
+    </div>
+    <div class="lightbox-hint">Toucher le fond noir pour fermer</div>
 </div>
 </body>
 </html>
