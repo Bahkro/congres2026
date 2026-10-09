@@ -87,7 +87,43 @@
             background: #fdf6ee; 
             border-left: 5px solid #28a3c3; 
         }
+/* Disposition flexible pour les cartes de stands */
+        .stand-card-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
 
+        .stand-info {
+            flex: 1;
+        }
+
+        .stand-img-container {
+            flex-shrink: 0;
+        }
+
+        .stand-img {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #eedcce;
+            background-color: #ffffff;
+            padding: 4px;
+            display: block;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.15s ease;
+        }
+
+        .stand-img-container a {
+            display: block;
+            text-decoration: none;
+        }
+
+        .stand-img-container a:active .stand-img {
+            transform: scale(0.92);
+        }
         .time { 
             font-weight: 700; 
             color: var(--primary-color); 
@@ -281,25 +317,50 @@
             if (!row || row.length === 0 || (!row[0] && !row[1])) continue;
             
             if (isStands) {
-                // Stands: Nom | Description | Emplacement
+                // Stands: Nom | Description | Emplacement | Fichier Image | Lien URL
                 let nom = row[0] || '';
                 let desc = row[1] || '';
                 let lieu = row[2] || '';
+                let imageFile = row[3] || '';
+                let url = row[4] || '';
                 
-                // On alterne la couleur pour chaque nouveau stand (nom différent)
+                // Alternance des couleurs
                 if (nom && nom !== lastGroupKey) {
                     colorClass = (colorClass === 'color-a') ? 'color-b' : 'color-a';
                     lastGroupKey = nom;
                 }
                 
+                // Gestion du lien URL
+                let formattedUrl = url.trim();
+                if (formattedUrl && !formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+                    formattedUrl = 'https://' + formattedUrl;
+                }
+
+                // Génération du HTML pour l'image
+                let imgHtml = '';
+                if (imageFile.trim()) {
+                    let imgTag = `<img src="${imageFile.trim()}" class="stand-img" alt="${nom}">`;
+                    if (formattedUrl) {
+                        imgHtml = `<div class="stand-img-container"><a href="${formattedUrl}" target="_blank" rel="noopener noreferrer" title="Visiter le site">${imgTag}</a></div>`;
+                    } else {
+                        imgHtml = `<div class="stand-img-container">${imgTag}</div>`;
+                    }
+                }
+                
                 if(nom) {
                     html += `<div class="card ${colorClass}">
-                        <div class="title">${getEmoji(nom, desc)} ${nom}</div>
-                        ${desc ? `<div class="description">${desc}</div>` : ''}
-                        ${lieu ? `<div class="location">📍 ${lieu}</div>` : ''}
+                        <div class="stand-card-content">
+                            <div class="stand-info">
+                                <div class="title">${getEmoji(nom, desc)} ${nom}</div>
+                                ${desc ? `<div class="description">${desc}</div>` : ''}
+                                ${lieu ? `<div class="location">📍 ${lieu}</div>` : ''}
+                            </div>
+                            ${imgHtml}
+                        </div>
                     </div>`;
                 }
-            } else {
+            }
+             else {
                 // Programme: Heure | Activité | Description | Lieu
                 let heure = row[0] || '';
                 let activite = row[1] || '';
